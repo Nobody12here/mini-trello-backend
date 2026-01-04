@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+AUTH_USER_MODEL = "accounts.CustomUserModel"
 # Application definition
 
 INSTALLED_APPS = [
@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     "drf_yasg",
     "accounts",
     "projects",
-    "tasks"
+    "tasks",
 ]
 
 MIDDLEWARE = [
