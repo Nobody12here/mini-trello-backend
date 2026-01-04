@@ -1,5 +1,4 @@
 
-
 ## Auth
 
  - [ ] **POST** /api/auth/register
