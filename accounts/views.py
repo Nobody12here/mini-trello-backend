@@ -1,9 +1,10 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
-from drf_yasg import openapi
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUserModel
 from .serializers import AccountRegisterSerializer, AccountSerializer
 
@@ -18,18 +19,26 @@ def register_user(request: Request):
     serializer = AccountRegisterSerializer(data=request.data)
     if not serializer.is_valid():
         return Response(
-            {"error": serializer.error_messages}, status=status.HTTP_400_BAD_REQUEST
+            {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
         )
     try:
         user = CustomUserModel.objects.create_user(
             email=serializer.validated_data.get("email"),
             password=serializer.validated_data.get("password"),
         )
+        if not user.is_active:
+            return Response(
+                {"error": "The user is not active"}, status=status.HTTP_401_UNAUTHORIZED
+            )
+        refresh = RefreshToken.for_user(user)
+
         response_serializer = AccountSerializer(user)
         return Response(
             {
                 "message": "User registered sucessfully!",
                 "user": response_serializer.data,
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
             },
             status=status.HTTP_201_CREATED,
         )
@@ -41,6 +50,40 @@ def register_user(request: Request):
         )
 
 
-@api_view()
-def test_view(request):
-    return Response("Hello world")
+@swagger_auto_schema(
+    method="post",
+    request_body=AccountRegisterSerializer,
+    responses={
+        200: AccountSerializer,
+        401: "Invalid email or password.",
+        400: "Bad request",
+    },
+)
+@api_view(["POST"])
+def login(request: Request):
+    serializer = AccountRegisterSerializer(data=request.data)
+
+    if not serializer.is_valid():
+        return Response(
+            {"error": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+        )
+    try:
+        user = authenticate(
+            request,
+            email=serializer.validated_data["email"],
+            password=serializer.validated_data["password"],
+        )
+        # Generate a JWT access and Refresh token for this user
+
+        if not user:
+            return Response(
+                {"error": "Invalid email or password."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+        response_serializer = AccountSerializer(user)
+        return Response(
+            {"message": "Login sucessfully!", "user": response_serializer.data},
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
