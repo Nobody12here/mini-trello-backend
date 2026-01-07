@@ -30,15 +30,12 @@ def register_user(request: Request):
             return Response(
                 {"error": "The user is not active"}, status=status.HTTP_401_UNAUTHORIZED
             )
-        refresh = RefreshToken.for_user(user)
 
         response_serializer = AccountSerializer(user)
         return Response(
             {
                 "message": "User registered sucessfully!",
                 "user": response_serializer.data,
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
             },
             status=status.HTTP_201_CREATED,
         )
@@ -80,9 +77,16 @@ def login(request: Request):
                 {"error": "Invalid email or password."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+        refresh = RefreshToken.for_user(user)
+
         response_serializer = AccountSerializer(user)
         return Response(
-            {"message": "Login sucessfully!", "user": response_serializer.data},
+            {
+                "message": "Login sucessfully!",
+                "user": response_serializer.data,
+                "access": str(refresh.access_token),
+                "refresh": str(refresh),
+            },
             status=status.HTTP_200_OK,
         )
     except Exception as e:

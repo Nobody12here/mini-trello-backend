@@ -4,7 +4,7 @@ from accounts.models import CustomUserModel
 
 class Project(models.Model):
     name = models.CharField(max_length=60)
-    descripiton = models.TextField()
+    description = models.TextField(blank=True, default="")
     owner = models.ForeignKey(
         CustomUserModel, related_name="project_owner", on_delete=models.CASCADE
     )
@@ -12,3 +12,12 @@ class Project(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super.save(*args, **kwargs)
+        if is_new:
+            self.members.add(self.owner)
+
+    def __str__(self):
+        return f"{self.name} - {self.owner}"

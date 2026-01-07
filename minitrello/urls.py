@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from projects.urls import router as project_router
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -24,6 +25,7 @@ urlpatterns = [
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     # Account App api
     path("api/", include("accounts.urls"), name="accounts"),
+    path("api/", include(project_router.urls), name="project"),
     # Swagger docs
     path("api/docs/", schema_view.with_ui("swagger", 0), name="api-docs"),
 ]
