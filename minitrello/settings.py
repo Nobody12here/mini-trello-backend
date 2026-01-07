@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -130,4 +131,11 @@ SWAGGER_SETTINGS = {
         "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
     },
     "USE_SESSION_AUTH": False,
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5), # Access token expires in 5 mins
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh token expires in 1 day
+    "ROTATE_REFRESH_TOKENS": True, # Generate new refresh token on refresh
+    "BLACKLIST_AFTER_ROTATION": True, # Blacklist old refresh token when rotating
 }

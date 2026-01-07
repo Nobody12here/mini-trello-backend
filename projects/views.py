@@ -18,8 +18,8 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def add_members(self, request: Request, pk=None):
         project = self.get_object()
-        serializer = ProjectMemberSerializer(project, data=request.data, partial=True)
+        serializer = ProjectMemberSerializer(instance=project, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        
+
         return Response({"message": "Adding member"}, status=status.HTTP_200_OK)
