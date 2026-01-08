@@ -6,6 +6,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from .serializers import ProjectSerializer, ProjectMemberSerializer
 from .models import Project
+from accounts.models import CustomUserModel
 
 # Create your views here.
 
@@ -18,8 +19,29 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def add_members(self, request: Request, pk=None):
         project = self.get_object()
-        serializer = ProjectMemberSerializer(instance=project, data=request.data, partial=True)
+        serializer = ProjectMemberSerializer(
+            instance=project, data=request.data, partial=True
+        )
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response({"message": "Adding member"}, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "message": "member added sucessfully",
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    @action(detail=True, methods=["post"])
+    def remove_members(self, request: Request, pk=None):
+        project: Project = self.get_object()
+        members = request.data.get("members", [])
+        if members:
+            members_ids = CustomUserModel.objects.filter(id__in=members).exclude(
+                id=project.owner.id
+            )
+            project.members.remove(*members_ids)
+
+        return Response(
+            {"message": "Members removed sucessfully"}, status=status.HTTP_200_OK
+        )

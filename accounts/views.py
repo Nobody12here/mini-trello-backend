@@ -2,16 +2,16 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
-from drf_yasg.utils import swagger_auto_schema
+from drf_spectacular.utils import extend_schema
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import CustomUserModel
 from .serializers import AccountRegisterSerializer, AccountSerializer
 
 
-@swagger_auto_schema(
-    method="post",
-    request_body=AccountRegisterSerializer,
+@extend_schema(
+    methods=["post"],
+    request=AccountRegisterSerializer,
     responses={201: AccountSerializer, 400: "Bad Request"},
 )
 @api_view(["POST"])
@@ -47,15 +47,12 @@ def register_user(request: Request):
         )
 
 
-@swagger_auto_schema(
-    method="post",
-    request_body=AccountRegisterSerializer,
-    responses={
-        200: AccountSerializer,
-        401: "Invalid email or password.",
-        400: "Bad request",
-    },
+@extend_schema(
+    methods=["post"],
+    request=AccountRegisterSerializer,
+    responses={201: AccountSerializer, 400: "Bad Request"},
 )
+
 @api_view(["POST"])
 def login(request: Request):
     serializer = AccountRegisterSerializer(data=request.data)

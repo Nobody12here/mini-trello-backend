@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "drf_spectacular",
-    "drf_yasg",
     "accounts",
     "projects",
     "tasks",
@@ -128,12 +127,7 @@ REST_FRAMEWORK = {
 
 STATIC_URL = "static/"
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Bearer": {"type": "apiKey", "name": "Authorization", "in": "header"}
-    },
-    "USE_SESSION_AUTH": False,
-}
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "mini-trello api",
     "DESCRIPTION": "A RESTful backend system where users can create projects, manage tasks, assign tasks to team members, and track task status.",
