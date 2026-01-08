@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_spectacular",
     "drf_yasg",
     "accounts",
     "projects",
@@ -117,9 +118,10 @@ USE_I18N = True
 USE_TZ = True
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
 }
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
@@ -132,10 +134,17 @@ SWAGGER_SETTINGS = {
     },
     "USE_SESSION_AUTH": False,
 }
+SPECTACULAR_SETTINGS = {
+    "TITLE": "mini-trello api",
+    "DESCRIPTION": "A RESTful backend system where users can create projects, manage tasks, assign tasks to team members, and track task status.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=5), # Access token expires in 5 mins
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),  # Access token expires in 5 mins
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Refresh token expires in 1 day
-    "ROTATE_REFRESH_TOKENS": True, # Generate new refresh token on refresh
-    "BLACKLIST_AFTER_ROTATION": True, # Blacklist old refresh token when rotating
+    "ROTATE_REFRESH_TOKENS": True,  # Generate new refresh token on refresh
+    "BLACKLIST_AFTER_ROTATION": True,  # Blacklist old refresh token when rotating
 }
