@@ -1,4 +1,5 @@
 from django.db import models
+from projects.models import Project
 
 # Create your models here.
 
@@ -14,8 +15,11 @@ class Task(models.Model):
         URGENT = 2, "Urgent"
         CRITICAL = 3, "Critical"
 
-    name = models.CharField(max_length=256,blank=False)
+    name = models.CharField(max_length=256, blank=False)
     description = models.TextField(blank=True, default="")
+    project = models.ForeignKey(
+        Project, null=True, on_delete=models.SET_NULL, related_name="project"
+    )
     status = models.CharField(
         choices=TaskStatus.choices,
         max_length=20,
