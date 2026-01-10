@@ -1,6 +1,6 @@
-from rest_framework.routers import SimpleRouter
-from rest_framework.urls import path
-from .views import TaskViewSet
+from rest_framework_nested.routers import NestedDefaultRouter
+from projects.urls import router as project_router
+from .views import TaskViewset
 
-router = SimpleRouter()
-router.register(r"tasks", TaskViewSet, basename="tasks")
+router = NestedDefaultRouter(project_router, "projects", lookup="project")
+router.register("tasks", TaskViewset, basename="project-task")
