@@ -4,24 +4,19 @@ from rest_framework.request import Request
 from rest_framework.decorators import action
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
+from .permissions import IsOwner
 from .serializers import ProjectSerializer, ProjectMemberSerializer
 from .models import Project
 from accounts.models import CustomUserModel
 
 
 class ProjectViewSet(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsOwner]
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
         owner = self.request.user
         return Project.objects.filter(owner=owner)
-        
-
-    def _check_project_owner(self, project: Project):
-        if project.owner != self.request.user:
-            raise PermissionDenied("Current User is not the owner of this project!")
 
     def perform_create(self, serializer: ProjectSerializer):
         project: Project = serializer.save(owner=self.request.user)
@@ -31,7 +26,6 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def add_members(self, request: Request, pk=None):
         project: Project = self.get_object()
-        self._check_project_owner(project=project)
         serializer = ProjectMemberSerializer(
             instance=project, data=request.data, partial=True
         )
@@ -48,7 +42,6 @@ class ProjectViewSet(ModelViewSet):
     @action(detail=True, methods=["post"])
     def remove_members(self, request: Request, pk=None):
         project: Project = self.get_object()
-        self._check_project_owner(project=project)
         members = request.data.get("members", [])
         if members:
             member_ids = CustomUserModel.objects.filter(id__in=members).exclude(

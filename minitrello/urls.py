@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.urls import path, include
-from drf_spectacular.views import SpectacularSwaggerView,SpectacularAPIView
+from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 from projects.urls import router as project_router
+from tasks.urls import router as task_router
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -15,8 +16,9 @@ urlpatterns = [
     # Account App api
     path("api/", include("accounts.urls"), name="accounts"),
     path("api/", include(project_router.urls), name="project"),
+    path("api/", include(task_router.urls), name="tasks"),
     # Swagger docs
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
     path(
         "api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="api-docs"
     ),

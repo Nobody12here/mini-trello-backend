@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Task(models.Model):
     class TaskStatus(models.TextChoices):
@@ -14,7 +12,7 @@ class Task(models.Model):
         URGENT = 2, "Urgent"
         CRITICAL = 3, "Critical"
 
-    name = models.CharField(max_length=256,blank=False)
+    name = models.CharField(max_length=256, blank=False)
     description = models.TextField(blank=True, default="")
     status = models.CharField(
         choices=TaskStatus.choices,
