@@ -16,7 +16,7 @@ class Task(models.Model):
     name = models.CharField(max_length=256, blank=False)
     description = models.TextField(blank=True, default="")
     project = models.ForeignKey(
-        Project, null=True, on_delete=models.SET_NULL, related_name="project"
+        Project, null=False, on_delete=models.CASCADE, related_name="task"
     )
     status = models.CharField(
         choices=TaskStatus.choices,
