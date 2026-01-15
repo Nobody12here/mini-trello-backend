@@ -19,9 +19,6 @@ class ProjectMemberSerializer(serializers.ModelSerializer):
         model = Project
         fields = ["members"]
 
-    def create(self, instance):
-        instance.members.add(instance.owner)
-
     def update(self, instance, validated_data):
         members = validated_data.get("members", [])
         if members:

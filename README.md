@@ -16,3 +16,9 @@
  - [ ] **GET** /api/projects/{id}/tasks
  - [ ] **PATCH** /api/tasks/{id}
  - [ ] **DELETE** /api/tasks/{id}
+
+## To remember
+ -  Project are filterd via the owner (project will be displayed to it's owner only)
+## TODO
+
+ - Make proper permission control for the tasks

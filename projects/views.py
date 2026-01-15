@@ -21,7 +21,6 @@ class ProjectViewSet(ModelViewSet):
     def perform_create(self, serializer: ProjectSerializer):
         project: Project = serializer.save(owner=self.request.user)
         project.members.add(project.owner)
-        return project
 
     @action(detail=True, methods=["post"])
     def add_members(self, request: Request, pk=None):
@@ -36,7 +35,7 @@ class ProjectViewSet(ModelViewSet):
             {
                 "message": "member added successfully",
             },
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_200_OK,
         )
 
     @action(detail=True, methods=["post"])
@@ -54,5 +53,5 @@ class ProjectViewSet(ModelViewSet):
             )
         return Response(
             {"message": "Members removed successfully"},
-            status=status.HTTP_204_NO_CONTENT,
+            status=status.HTTP_200_OK,
         )
